@@ -5,7 +5,7 @@
 
 import os
 from flask import Flask
-from models import db, User, Property
+from realestate.models import db, User, Property
 from werkzeug.security import generate_password_hash
 
 # ─────────────────────────────────────────────
