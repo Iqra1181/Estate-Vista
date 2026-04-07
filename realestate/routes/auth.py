@@ -4,7 +4,7 @@
 # Uses Werkzeug to hash/check passwords securely
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from models import db, User
+from realestate.models import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Create a Blueprint — a mini Flask app that groups related routes
