@@ -23,8 +23,6 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024        # Max upload size: 16 MB
 
     # ── Initialize Extensions ──────────────────────────────────────────────────
-def create_app():
-    app = Flask(__name__)
     db.init_app(app)
 
     from realestate.routes.auth import auth_bp
