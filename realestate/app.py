@@ -23,34 +23,27 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024        # Max upload size: 16 MB
 
     # ── Initialize Extensions ──────────────────────────────────────────────────
-    def create_app():
-        app = Flask(__name__)
+   def create_app():
+    app = Flask(__name__)
+    db.init_app(app)
 
-        db.init_app(app)
+    from realestate.routes.auth import auth_bp
+    from realestate.routes.properties import properties_bp
+    from realestate.routes.favorites import favorites_bp
+    from realestate.routes.inquiries import inquiries_bp
+    from realestate.routes.analytics import analytics_bp
 
-    # IMPORTS
-        from realestate.routes.auth import auth_bp
-        from realestate.routes.properties import properties_bp
-        from realestate.routes.favorites import favorites_bp
-        from realestate.routes.inquiries import inquiries_bp
-        from realestate.routes.analytics import analytics_bp
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(properties_bp)
+    app.register_blueprint(favorites_bp)
+    app.register_blueprint(inquiries_bp)
+    app.register_blueprint(analytics_bp)
 
-    # REGISTER BLUEPRINTS
-        app.register_blueprint(auth_bp)
-        app.register_blueprint(properties_bp)
-        app.register_blueprint(favorites_bp)
-        app.register_blueprint(inquiries_bp)
-        app.register_blueprint(analytics_bp)
-    
-   
-    # ── Create Tables & Seed Data ──────────────────────────────────────────────
-        with app.app_context():
-            db.create_all()       # Create all tables if they don't exist yet
-            seed_data()           # Add sample data if the DB is empty
+    with app.app_context():
+        db.create_all()
+        seed_data()
 
-        return app
-
-
+    return app
 # ─────────────────────────────────────────────
 # SEED DATA FUNCTION
 # Populates the database with sample users and properties
