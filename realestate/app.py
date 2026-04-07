@@ -23,25 +23,26 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024        # Max upload size: 16 MB
 
     # ── Initialize Extensions ──────────────────────────────────────────────────
+    def create_app():
+    app = Flask(__name__)
+
     db.init_app(app)
 
-with app.app_context():
-    db.create_all()
-
-    # ── Register Blueprints (Route files) ──────────────────────────────────────
-    # Blueprints let us split routes into separate files for cleaner code
+    # IMPORTS
     from realestate.routes.auth import auth_bp
-from realestate.routes.properties import properties_bp
-from realestate.routes.favorites import favorites_bp
-from realestate.routes.inquiries import inquiries_bp
-from realestate.routes.analytics import analytics_bp
-   
+    from realestate.routes.properties import properties_bp
+    from realestate.routes.favorites import favorites_bp
+    from realestate.routes.inquiries import inquiries_bp
+    from realestate.routes.analytics import analytics_bp
+
+    # REGISTER BLUEPRINTS
     app.register_blueprint(auth_bp)
     app.register_blueprint(properties_bp)
     app.register_blueprint(favorites_bp)
     app.register_blueprint(inquiries_bp)
     app.register_blueprint(analytics_bp)
-
+    
+   
     # ── Create Tables & Seed Data ──────────────────────────────────────────────
     with app.app_context():
         db.create_all()       # Create all tables if they don't exist yet
