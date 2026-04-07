@@ -23,9 +23,9 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024        # Max upload size: 16 MB
 
     # ── Initialize Extensions ──────────────────────────────────────────────────
-    db.init_app(app)  # Link the database to the Flask app
+    db.init_app(app)
 
-    with app.app_context():
+with app.app_context():
     db.create_all()
 
     # ── Register Blueprints (Route files) ──────────────────────────────────────
