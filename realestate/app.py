@@ -30,12 +30,12 @@ with app.app_context():
 
     # ── Register Blueprints (Route files) ──────────────────────────────────────
     # Blueprints let us split routes into separate files for cleaner code
-    from routes.auth import auth_bp
-    from routes.properties import properties_bp
-    from routes.favorites import favorites_bp
-    from routes.inquiries import inquiries_bp
-    from routes.analytics import analytics_bp
-
+    from realestate.routes.auth import auth_bp
+from realestate.routes.properties import properties_bp
+from realestate.routes.favorites import favorites_bp
+from realestate.routes.inquiries import inquiries_bp
+from realestate.routes.analytics import analytics_bp
+   
     app.register_blueprint(auth_bp)
     app.register_blueprint(properties_bp)
     app.register_blueprint(favorites_bp)
