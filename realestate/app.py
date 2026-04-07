@@ -16,12 +16,15 @@ def create_app():
     app = Flask(__name__)
 
     # ── Configuration ──────────────────────────────────────────────────────────
-    app.config['SECRET_KEY'] = 'realestate_secret_key_2024'   # Used for session encryption
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///realestate.db'  # SQLite DB file
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False        # Suppress a deprecation warning
-    app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')  # Where uploaded images go
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024        # Max upload size: 16 MB
+    app.config['SECRET_KEY'] = 'realestate_secret_key_2024'
 
+    os.makedirs("instance", exist_ok=True)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/realestate.db'
+
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+   
     # ── Initialize Extensions ──────────────────────────────────────────────────
     db.init_app(app)
 
