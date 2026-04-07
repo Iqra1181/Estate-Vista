@@ -25,6 +25,9 @@ def create_app():
     # ── Initialize Extensions ──────────────────────────────────────────────────
     db.init_app(app)  # Link the database to the Flask app
 
+    with app.app_context():
+    db.create_all()
+
     # ── Register Blueprints (Route files) ──────────────────────────────────────
     # Blueprints let us split routes into separate files for cleaner code
     from routes.auth import auth_bp
