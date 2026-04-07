@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Login — EstateVista{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-lg p-4 p-md-5 auth-card">
+                <div class="text-center mb-4">
+                    <i class="bi bi-buildings-fill display-4 text-primary"></i>
+                    <h3 class="fw-bold mt-2">Welcome Back!</h3>
+                    <p class="text-muted">Sign in to your EstateVista account</p>
+                </div>
+
+                <form action="{{ url_for('auth.login') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label fw-600">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" name="email" class="form-control"
+                                   placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-600">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="password" class="form-control"
+                                   placeholder="Your password" required>
+                        </div>
+                    </div>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            Sign In <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Demo credentials hint -->
+                <div class="alert alert-info border-0 small">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Demo Login:</strong> demo@realestate.com / password123
+                </div>
+
+                <hr>
+                <p class="text-center text-muted mb-0">
+                    Don't have an account?
+                    <a href="{{ url_for('auth.signup') }}" class="fw-600 text-decoration-none">Sign Up Free</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}My Inquiries — EstateVista{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h3 class="fw-bold mb-4">
+        <i class="bi bi-envelope-fill text-primary"></i> Inquiries for My Properties
+        <span class="badge bg-primary ms-2">{{ inquiries | length }}</span>
+    </h3>
+
+    {% if not inquiries %}
+    <div class="text-center py-5">
+        <i class="bi bi-inbox display-1 text-muted"></i>
+        <h4 class="mt-3 text-muted">No inquiries yet</h4>
+        <p class="text-muted">When users contact you about your listed properties, messages will appear here.</p>
+    </div>
+    {% else %}
+    <div class="row g-4">
+        {% for inq in inquiries %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="fw-bold mb-0">{{ inq.name }}</h6>
+                        <small class="text-muted">{{ inq.sent_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+                    </div>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-envelope"></i> {{ inq.email }}
+                    </p>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-house text-primary"></i>
+                        <strong>Re:</strong> {{ inq.property.title if inq.property else 'Deleted Property' }}
+                    </p>
+                    <div class="inquiry-message p-3 rounded-3 mt-2">
+                        {{ inq.message }}
+                    </div>
+                    <!-- Quick Reply via Mail -->
+                    <a href="mailto:{{ inq.email }}?subject=Re: {{ inq.property.title if inq.property else 'Property' }}&body=Hi {{ inq.name }},"
+                       class="btn btn-outline-primary btn-sm mt-3">
+                        <i class="bi bi-reply"></i> Reply via Email
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}Market Analytics — EstateVista{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold"><i class="bi bi-bar-chart-line-fill text-primary"></i> Market Analytics</h2>
+        <p class="text-muted">Real-time data insights from our property database</p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Chart 1: Average Price per Location (Bar Chart) -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-4">📍 Average Price by City</h5>
+                <canvas id="priceChart" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2: Listings by Type (Doughnut Chart) -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-4">🏠 Listings by Type</h5>
+                <canvas id="typeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 3: Price Distribution (Line / Bar Chart) -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="fw-bold mb-4">💰 Price Range Distribution</h5>
+                <canvas id="distributionChart" height="60"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// ─────────────────────────────────────────────
+// Chart 1: Average Price by Location (Bar)
+// ─────────────────────────────────────────────
+async function loadPriceChart() {
+    const res = await fetch('/api/avg-price-by-location');
+    const data = await res.json();
+
+    new Chart(document.getElementById('priceChart'), {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Avg Price (₹)',
+                data: data.values,
+                backgroundColor: [
+                    '#4361ee', '#3a0ca3', '#7209b7', '#f72585',
+                    '#4cc9f0', '#4895ef', '#560bad', '#3f37c9'
+                ],
+                borderRadius: 8,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `₹${ctx.raw.toLocaleString('en-IN')}`
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        callback: val => '₹' + (val / 100000).toFixed(1) + 'L'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ─────────────────────────────────────────────
+// Chart 2: Listings by Type (Doughnut)
+// ─────────────────────────────────────────────
+async function loadTypeChart() {
+    const res = await fetch('/api/listings-by-type');
+    const data = await res.json();
+
+    new Chart(document.getElementById('typeChart'), {
+        type: 'doughnut',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                data: data.values,
+                backgroundColor: ['#4361ee', '#2dc653'],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+
+// ─────────────────────────────────────────────
+// Chart 3: Price Distribution (Horizontal Bar)
+// ─────────────────────────────────────────────
+async function loadDistributionChart() {
+    const res = await fetch('/api/price-distribution');
+    const data = await res.json();
+
+    new Chart(document.getElementById('distributionChart'), {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Number of Properties',
+                data: data.values,
+                backgroundColor: 'rgba(67, 97, 238, 0.15)',
+                borderColor: '#4361ee',
+                borderWidth: 2,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y',  // Makes it horizontal
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { ticks: { stepSize: 1 } }
+            }
+        }
+    });
+}
+
+// Load all charts when page is ready
+loadPriceChart();
+loadTypeChart();
+loadDistributionChart();
+</script>
+{% endblock %}

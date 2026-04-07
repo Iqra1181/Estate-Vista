@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% block title %}{{ prop.title }} — EstateVista{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('properties.index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('properties.index', search=prop.location) }}">{{ prop.location }}</a></li>
+            <li class="breadcrumb-item active">{{ prop.title[:40] }}...</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+
+        <!-- ── LEFT: Image + Details ──────────────────────── -->
+        <div class="col-lg-8">
+
+            <!-- Main Image -->
+            <div class="property-detail-img mb-4">
+                <img src="{{ prop.image or 'https://images.unsplash.com/photo-1570129477492-45c003dc0000?w=900' }}"
+                     class="img-fluid rounded-4 shadow w-100"
+                     style="height: 420px; object-fit: cover;"
+                     alt="{{ prop.title }}"
+                     onerror="this.src='https://images.unsplash.com/photo-1570129477492-45c003dc0000?w=900'">
+            </div>
+
+            <!-- Property Info Card -->
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                    <div>
+                        <h2 class="fw-bold mb-1">{{ prop.title }}</h2>
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-geo-alt-fill text-danger"></i> {{ prop.location }}
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <div class="property-price-lg">
+                            ₹{{ "{:,.0f}".format(prop.price) }}
+                            {% if prop.property_type == 'rent' %}<small class="text-muted fs-6">/month</small>{% endif %}
+                        </div>
+                        <span class="badge {% if prop.property_type == 'sale' %}bg-primary{% else %}bg-success{% endif %} mt-1">
+                            For {{ prop.property_type | capitalize }}
+                        </span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Quick Stats -->
+                <div class="row text-center g-3 mb-3">
+                    <div class="col-4">
+                        <div class="stat-box p-3 rounded-3">
+                            <i class="bi bi-arrows-angle-expand fs-4 text-primary"></i>
+                            <div class="fw-bold mt-1">{{ prop.size | int }} sq ft</div>
+                            <small class="text-muted">Total Area</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box p-3 rounded-3">
+                            <i class="bi bi-house fs-4 text-warning"></i>
+                            <div class="fw-bold mt-1">{{ prop.property_type | capitalize }}</div>
+                            <small class="text-muted">Property Type</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box p-3 rounded-3">
+                            <i class="bi bi-currency-rupee fs-4 text-success"></i>
+                            <div class="fw-bold mt-1">₹{{ "{:,.0f}".format(prop.price / prop.size) }}/sqft</div>
+                            <small class="text-muted">Rate</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                {% if prop.description %}
+                <h5 class="fw-bold mt-3">About This Property</h5>
+                <p class="text-muted lh-lg">{{ prop.description }}</p>
+                {% endif %}
+
+                <!-- Listed Date -->
+                <small class="text-muted">
+                    <i class="bi bi-calendar3"></i> Listed on {{ prop.created_at.strftime('%B %d, %Y') }}
+                </small>
+            </div>
+
+            <!-- ── Google Maps Embed ──────────────────────── -->
+            <div class="card border-0 shadow-sm p-3 mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-map text-danger"></i> Location Map</h5>
+                <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
+                    <iframe
+                        src="https://maps.google.com/maps?q={{ prop.location | urlencode }}&output=embed&z=13"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── RIGHT SIDEBAR: Actions + Contact Form ──────── -->
+        <div class="col-lg-4">
+
+            <!-- Action Buttons -->
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <h5 class="fw-bold mb-3">Quick Actions</h5>
+
+                <!-- Favorite Button -->
+                <button id="favBtn"
+                        class="btn w-100 mb-3 {% if is_favorited %}btn-danger{% else %}btn-outline-danger{% endif %}"
+                        onclick="toggleFavoriteDetail({{ prop.id }})">
+                    <i class="bi {% if is_favorited %}bi-heart-fill{% else %}bi-heart{% endif %}" id="favIcon"></i>
+                    <span id="favText">{% if is_favorited %}Saved to Favorites{% else %}Save to Favorites{% endif %}</span>
+                </button>
+
+                <!-- Share / Copy Link -->
+                <button class="btn btn-outline-secondary w-100" onclick="copyLink()">
+                    <i class="bi bi-share"></i> Share Property
+                </button>
+            </div>
+
+            <!-- ── Inquiry / Contact Form ──────────────────── -->
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-envelope-fill text-primary"></i> Contact Owner</h5>
+
+                <form action="{{ url_for('inquiries.send_inquiry', property_id=prop.id) }}" method="POST">
+                    <div class="mb-3">
+                        <input type="text" name="name" class="form-control"
+                               placeholder="Your Name *"
+                               value="{{ session.get('user_name', '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" name="email" class="form-control"
+                               placeholder="Your Email *" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="message" class="form-control" rows="4"
+                                  placeholder="Hi, I'm interested in this property. Please share more details..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-send-fill"></i> Send Inquiry
+                    </button>
+                </form>
+            </div>
+
+            <!-- Price per sq ft insight -->
+            <div class="card border-0 shadow-sm p-4 bg-light">
+                <h6 class="fw-bold mb-2"><i class="bi bi-lightbulb text-warning"></i> Market Insight</h6>
+                <p class="text-muted small mb-0">
+                    This property is priced at <strong>₹{{ "{:,.0f}".format(prop.price / prop.size) }} per sq ft</strong>
+                    in {{ prop.location }}.
+                    {% if prop.price / prop.size < 10000 %}
+                        This is below the metro average — potentially a great deal! 📈
+                    {% else %}
+                        This is in the premium range for the area.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         SMART RECOMMENDATIONS
+    ════════════════════════════════════════════ -->
+    {% if similar %}
+    <section class="mt-5 pt-4 border-top">
+        <h4 class="fw-bold mb-4">
+            <i class="bi bi-stars text-warning"></i> You May Also Like
+        </h4>
+        <div class="row g-4">
+            {% for s in similar %}
+            <div class="col-md-4">
+                <div class="property-card card border-0 shadow-sm h-100">
+                    <img src="{{ s.image or 'https://images.unsplash.com/photo-1570129477492-45c003dc0000?w=400' }}"
+                         class="card-img-top"
+                         style="height: 180px; object-fit: cover;"
+                         alt="{{ s.title }}"
+                         onerror="this.src='https://images.unsplash.com/photo-1570129477492-45c003dc0000?w=400'">
+                    <div class="card-body">
+                        <h6 class="fw-bold">{{ s.title }}</h6>
+                        <p class="text-muted small"><i class="bi bi-geo-alt-fill text-danger"></i> {{ s.location }}</p>
+                        <span class="fw-bold text-primary">₹{{ "{:,.0f}".format(s.price) }}</span>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a href="{{ url_for('properties.detail', property_id=s.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Toggle favorite from detail page
+async function toggleFavoriteDetail(propertyId) {
+    const btn = document.getElementById('favBtn');
+    const icon = document.getElementById('favIcon');
+    const text = document.getElementById('favText');
+
+    try {
+        const res = await fetch(`/favorite/${propertyId}`, { method: 'POST' });
+
+        // If not logged in, redirect to login
+        if (res.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+
+        const data = await res.json();
+
+        if (data.status === 'added') {
+            btn.classList.replace('btn-outline-danger', 'btn-danger');
+            icon.classList.replace('bi-heart', 'bi-heart-fill');
+            text.textContent = 'Saved to Favorites';
+        } else {
+            btn.classList.replace('btn-danger', 'btn-outline-danger');
+            icon.classList.replace('bi-heart-fill', 'bi-heart');
+            text.textContent = 'Save to Favorites';
+        }
+    } catch (e) {
+        console.error('Favorite toggle failed:', e);
+    }
+}
+
+// Copy URL to clipboard
+function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copied to clipboard! 📋');
+    });
+}
+</script>
+{% endblock %}

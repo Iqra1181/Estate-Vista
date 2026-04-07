@@ -1,0 +1,519 @@
+/* ═══════════════════════════════════════════════════════════════
+   style.css — EstateVista Main Stylesheet
+   
+   Sections:
+   1. CSS Variables (Light & Dark Theme)
+   2. Base / Typography
+   3. Navbar
+   4. Hero Section
+   5. Property Cards
+   6. Filter Sidebar
+   7. Detail Page
+   8. Auth Pages
+   9. Analytics
+   10. Misc Components
+   11. Footer
+   12. Animations
+   13. Responsive / Mobile
+═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────
+   1. CSS VARIABLES — Light Theme (default)
+   All colors reference these variables so
+   dark mode only needs to override them.
+───────────────────────────────────────────── */
+[data-theme="light"] {
+    --bg-primary:       #ffffff;
+    --bg-secondary:     #f8f9fb;
+    --bg-card:          #ffffff;
+    --bg-input:         #ffffff;
+    --text-primary:     #1a1a2e;
+    --text-secondary:   #6c757d;
+    --text-muted:       #9ca3af;
+    --border-color:     #e9ecef;
+    --shadow-sm:        0 2px 12px rgba(0,0,0,0.07);
+    --shadow-md:        0 8px 32px rgba(0,0,0,0.10);
+    --shadow-lg:        0 16px 48px rgba(0,0,0,0.13);
+    --nav-bg:           rgba(255,255,255,0.95);
+    --nav-border:       rgba(0,0,0,0.08);
+    --hero-overlay:     rgba(15, 23, 42, 0.55);
+    --filter-bg:        #f8f9fb;
+    --stat-box-bg:      #f0f4ff;
+    --inquiry-msg-bg:   #f0f4ff;
+    --estimate-bg:      #e8f5e9;
+    --badge-new-bg:     #ff4757;
+}
+
+/* ─────────────────────────────────────────────
+   Dark Theme — just override the variables!
+───────────────────────────────────────────── */
+[data-theme="dark"] {
+    --bg-primary:       #0f1117;
+    --bg-secondary:     #161b27;
+    --bg-card:          #1e2535;
+    --bg-input:         #252d3d;
+    --text-primary:     #e8eaf0;
+    --text-secondary:   #9aa5b4;
+    --text-muted:       #6b7a8d;
+    --border-color:     #2d3748;
+    --shadow-sm:        0 2px 12px rgba(0,0,0,0.3);
+    --shadow-md:        0 8px 32px rgba(0,0,0,0.4);
+    --shadow-lg:        0 16px 48px rgba(0,0,0,0.5);
+    --nav-bg:           rgba(15, 17, 23, 0.97);
+    --nav-border:       rgba(255,255,255,0.05);
+    --hero-overlay:     rgba(0, 0, 0, 0.70);
+    --filter-bg:        #1e2535;
+    --stat-box-bg:      #252d3d;
+    --inquiry-msg-bg:   #252d3d;
+    --estimate-bg:      #1a2d1e;
+    --badge-new-bg:     #e84057;
+}
+
+/* ─────────────────────────────────────────────
+   2. BASE & TYPOGRAPHY
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    line-height: 1.6;
+}
+
+h1, h2, h3, .hero-title {
+    font-family: 'Playfair Display', serif;
+}
+
+.fw-500 { font-weight: 500; }
+.fw-600 { font-weight: 600; }
+
+/* Global card styling */
+.card {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    transition: background-color 0.3s ease, box-shadow 0.25s ease;
+}
+
+/* Form controls respect dark mode */
+.form-control, .form-select {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #4361ee !important;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15) !important;
+}
+
+.form-control::placeholder { color: var(--text-muted) !important; }
+
+.input-group-text {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* ─────────────────────────────────────────────
+   3. NAVBAR
+───────────────────────────────────────────── */
+#mainNav {
+    background: var(--nav-bg) !important;
+    border-bottom: 1px solid var(--nav-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: background 0.3s ease;
+    z-index: 1030;
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4361ee !important;
+    letter-spacing: -0.5px;
+}
+
+.navbar-brand i { margin-right: 4px; }
+
+.nav-link {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    font-size: 0.92rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-link:hover {
+    background: rgba(67, 97, 238, 0.08);
+    color: #4361ee !important;
+}
+
+.navbar-text { color: var(--text-primary) !important; font-size: 0.9rem; }
+
+/* Dark mode toggle button */
+.theme-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    transition: all 0.2s;
+}
+.theme-toggle:hover { background: var(--stat-box-bg) !important; transform: rotate(20deg); }
+
+.navbar-toggler {
+    border-color: var(--border-color) !important;
+}
+.navbar-toggler-icon {
+    filter: var(--text-primary) == '#e8eaf0' ? invert(1) : none;
+}
+
+/* ─────────────────────────────────────────────
+   4. HERO SECTION
+───────────────────────────────────────────── */
+.hero-section {
+    position: relative;
+    background: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&auto=format&fit=crop') center/cover no-repeat;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--hero-overlay);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 80px 20px;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    animation: fadeInUp 0.7s ease both;
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    animation: fadeInUp 0.7s 0.1s ease both;
+}
+
+.hero-search-form {
+    max-width: 680px;
+    margin: 0 auto 1.5rem;
+    animation: fadeInUp 0.7s 0.2s ease both;
+}
+
+.hero-search-form .form-control {
+    font-size: 1rem;
+    background: #fff !important;
+    color: #333 !important;
+    border: none;
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.7s 0.3s ease both;
+}
+.hero-stats span {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ─────────────────────────────────────────────
+   5. PROPERTY CARDS
+───────────────────────────────────────────── */
+.property-card {
+    border-radius: 16px !important;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    animation: fadeInUp 0.5s ease both;
+}
+
+.property-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Image container with overlay effects */
+.property-img-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.property-img {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+    transition: transform 0.4s ease;
+    display: block;
+}
+
+.property-card:hover .property-img {
+    transform: scale(1.05);
+}
+
+/* For Sale / Rent badge on card image */
+.property-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+
+/* ❤️ Favorite heart button */
+.fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #ccc;
+    font-size: 1.1rem;
+    backdrop-filter: blur(4px);
+}
+
+.fav-btn:hover, .fav-btn.active {
+    color: #e84057;
+    transform: scale(1.15);
+    background: white;
+}
+
+.fav-btn.active { color: #e84057; }
+
+/* Price display */
+.property-price {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #4361ee;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.property-price-lg {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #4361ee;
+    font-family: 'Playfair Display', serif;
+    line-height: 1.1;
+}
+
+/* Recently added small cards */
+.recent-card {
+    border-radius: 12px !important;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.recent-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md) !important;
+}
+
+/* ─────────────────────────────────────────────
+   6. FILTER SIDEBAR
+───────────────────────────────────────────── */
+.filter-card {
+    border-radius: 16px !important;
+    background-color: var(--bg-card) !important;
+}
+
+.estimate-result {
+    background: var(--estimate-bg);
+    border-radius: 10px;
+    color: var(--text-primary);
+}
+
+/* ─────────────────────────────────────────────
+   7. DETAIL PAGE
+───────────────────────────────────────────── */
+.stat-box {
+    background-color: var(--stat-box-bg);
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+.stat-box:hover { transform: translateY(-2px); }
+
+.inquiry-message {
+    background-color: var(--inquiry-msg-bg);
+    border-left: 3px solid #4361ee;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Image upload box */
+.image-upload-box {
+    border: 2px dashed var(--border-color);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+.image-upload-box:hover {
+    border-color: #4361ee;
+    background: rgba(67, 97, 238, 0.04);
+}
+
+/* ─────────────────────────────────────────────
+   8. AUTH PAGES
+───────────────────────────────────────────── */
+.auth-card {
+    border-radius: 20px !important;
+    animation: fadeInUp 0.5s ease;
+}
+
+/* ─────────────────────────────────────────────
+   9. ANALYTICS
+───────────────────────────────────────────── */
+/* Chart.js canvas inherits card background — works in both themes */
+
+/* ─────────────────────────────────────────────
+   10. MISC COMPONENTS
+───────────────────────────────────────────── */
+
+/* Breadcrumb */
+.breadcrumb-item a { color: #4361ee; text-decoration: none; }
+.breadcrumb-item.active { color: var(--text-secondary); }
+
+/* Alert styling for dark mode */
+.alert {
+    border-radius: 12px;
+    border: none;
+}
+
+/* Badge styling */
+.badge { font-weight: 600; letter-spacing: 0.3px; }
+
+/* Pagination */
+.page-link {
+    color: #4361ee;
+    border-color: var(--border-color);
+    background: var(--bg-card);
+}
+.page-item.active .page-link {
+    background-color: #4361ee;
+    border-color: #4361ee;
+}
+.page-link:hover { background: rgba(67, 97, 238, 0.08); color: #4361ee; }
+.page-item.disabled .page-link { background: var(--bg-secondary); color: var(--text-muted); }
+
+/* Button overrides for consistency */
+.btn-primary {
+    background: #4361ee;
+    border-color: #4361ee;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+    background: #3a54d4;
+    border-color: #3a54d4;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(67, 97, 238, 0.35);
+}
+.btn-outline-primary { color: #4361ee; border-color: #4361ee; font-weight: 600; }
+.btn-outline-primary:hover { background: #4361ee; border-color: #4361ee; }
+
+/* Scrollbar (webkit) */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: #4361ee55; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #4361ee; }
+
+/* ─────────────────────────────────────────────
+   11. FOOTER
+───────────────────────────────────────────── */
+.footer {
+    background-color: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    transition: background-color 0.3s;
+}
+
+/* ─────────────────────────────────────────────
+   12. ANIMATIONS
+───────────────────────────────────────────── */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animation delay for property cards in grid */
+#propertyGrid .col-md-6:nth-child(1) .property-card { animation-delay: 0.0s; }
+#propertyGrid .col-md-6:nth-child(2) .property-card { animation-delay: 0.07s; }
+#propertyGrid .col-md-6:nth-child(3) .property-card { animation-delay: 0.14s; }
+#propertyGrid .col-md-6:nth-child(4) .property-card { animation-delay: 0.21s; }
+#propertyGrid .col-md-6:nth-child(5) .property-card { animation-delay: 0.28s; }
+#propertyGrid .col-md-6:nth-child(6) .property-card { animation-delay: 0.35s; }
+
+/* Smooth theme transition for all elements */
+*, *::before, *::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+/* But don't slow down hover transforms */
+.property-card, .property-img, .fav-btn, .btn, .nav-link, .theme-toggle {
+    transition: transform 0.25s ease, box-shadow 0.25s ease,
+                background-color 0.3s ease, color 0.2s ease,
+                border-color 0.3s ease, opacity 0.2s ease;
+}
+
+/* ─────────────────────────────────────────────
+   13. RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .hero-section { min-height: 380px; }
+    .hero-title { font-size: 2rem; }
+    .hero-stats { gap: 1rem; }
+    .hero-stats span { font-size: 0.85rem; }
+
+    .property-img { height: 170px; }
+
+    /* Stack filter above cards on mobile */
+    .filter-card { position: static !important; }
+}
+
+@media (max-width: 576px) {
+    .container { padding-left: 1rem; padding-right: 1rem; }
+    .property-price-lg { font-size: 1.5rem; }
+}
