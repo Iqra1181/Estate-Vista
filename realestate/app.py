@@ -189,6 +189,9 @@ def seed_data():
 # ─────────────────────────────────────────────
 # RUN THE APP
 # ─────────────────────────────────────────────
-if __name__ == '__main__':
-    app = create_app()
-    app.run(host="0.0.0.0", port=10000)   # debug=True enables auto-reload during development
+app = create_app()   # 👈 ADD THIS LINE HERE (top-level)
+
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
